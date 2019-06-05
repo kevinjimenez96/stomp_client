@@ -7,9 +7,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// A Calculator.
 class StompClient {
   IOWebSocketChannel channel;
-
+  Stream<String> stream; 
   StompClient({@required urlBackend}) {
     channel = IOWebSocketChannel.connect(urlBackend);
+    stream = channel.stream;
     channel.stream.listen((message) {
       // handling of the incoming messages
       print(message);
