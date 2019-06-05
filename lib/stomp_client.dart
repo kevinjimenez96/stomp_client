@@ -7,7 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// A Calculator.
 class StompClient {
   IOWebSocketChannel channel;
-  Stream<String> stream; 
+  Stream<dynamic> stream;
   StompClient({@required urlBackend}) {
     channel = IOWebSocketChannel.connect(urlBackend);
     stream = channel.stream;
@@ -25,12 +25,21 @@ class StompClient {
 
   void connectWithToken(String token) {
     channel.sink.add("CONNECT\n" +
-        "Authorization:Bearer " + token + "\n" +
+        "Authorization:Bearer " +
+        token +
+        "\n" +
         "accept-version:1.1,1.0\n" +
         "heart-beat:60000,0\n" +
         "\n" +
         "\x00");
   }
 
-
+  void subscribe(String topic) {
+    channel.sink.add("SUBSCRIBE" +
+        "id:" + 0.toString() + "\n" +
+        "destination:"  + topic + "\n" +
+        "ack:auto\n" +
+        "\n" +
+        "\x00");
+  }
 }

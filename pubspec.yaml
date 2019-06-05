@@ -10,8 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    
+
   web_socket_channel: ^1.0.13
+
+  
 
 dev_dependencies:
   flutter_test:
