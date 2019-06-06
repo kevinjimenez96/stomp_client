@@ -34,7 +34,7 @@ class StompClient {
     channel.sink.add("DISCONNECT\n" + 
         "\n" + 
         "\x00");
-    //channel.sink.close();
+    channel.sink.close();
   }
 
   void subscribe({@required String topic}) {
