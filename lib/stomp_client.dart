@@ -1,6 +1,7 @@
 library stomp_client;
 
 import 'dart:collection';
+import 'dart:async';
 
 import 'package:web_socket_channel/io.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,22 @@ class StompClient {
   IOWebSocketChannel channel;
   Stream<dynamic> stream;
   HashMap<String, int> _topics;
+  HashMap<String, Function> _callBacks;
+  HashMap<String, StreamController<HashMap>> _streams;
+  bool connected;
   int _topicsCount;
 
   StompClient({@required urlBackend}) {
     channel = IOWebSocketChannel.connect(urlBackend);
     stream = channel.stream;
+    channel.stream.listen((message) {
+      // handling of the incoming messages
+      messageReceieved(message);
+    }, onError: (error, StackTrace stackTrace) {
+      // error handling
+    }, onDone: () {
+      // communication has been closed
+    });
     _topics = HashMap();
     _topicsCount = 0;
   }
@@ -31,44 +43,85 @@ class StompClient {
   }
 
   void disconnect() {
-    channel.sink.add("DISCONNECT\n" + 
-        "\n" + 
-        "\x00");
+    channel.sink.add("DISCONNECT\n" + "\n" + "\x00");
     channel.sink.close();
   }
 
-  void subscribe({@required String topic}) {
-    if (!_topics.containsKey(topic)){
+  StreamController<HashMap> subscribe(
+      {@required String topic, @required Function callback}) {
+    if (!_topics.containsKey(topic)) {
       _topics[topic] = _topicsCount;
+      _callBacks[topic] = callback;
+      _streams[topic] = new StreamController<HashMap>();
       channel.sink.add("SUBSCRIBE\n" +
-          "id:" + _topicsCount.toString() + "\n" +
-          "destination:" + topic + "\n" +
+          "id:" +
+          _topicsCount.toString() +
+          "\n" +
+          "destination:" +
+          topic +
+          "\n" +
           "ack:auto\n" +
           "\n" +
           "\x00");
       _topicsCount++;
+      return _streams[topic];
     }
+    return null;
   }
 
   void unsubscribe({@required String topic}) {
-    if (_topics.containsKey(topic)){
+    if (_topics.containsKey(topic)) {
       channel.sink.add("UNSUBSCRIBE\n" +
-          "id:" + _topics[topic].toString() + "\n" +
+          "id:" +
+          _topics[topic].toString() +
+          "\n" +
           "\n" +
           "\x00");
       _topics.remove(topic);
+      _callBacks.remove(topic);
+      _streams.remove(topic);
     }
   }
 
   void send({@required String topic, String message}) {
-    if (_topics.containsKey(topic)){
+    if (_topics.containsKey(topic)) {
       channel.sink.add("SEND\n" +
-          "destination:" + topic + "\n" +
+          "destination:" +
+          topic +
+          "\n" +
           "content-type:text/plain\n" +
           "\n" +
-          message + "\n" +
+          message +
+          "\n" +
           "\n" +
           "\x00");
+    }
+  }
+
+  void messageReceieved(String message) {
+    if(message.split("\n")[0] == "MESSAGE"){
+      HashMap messageHashMap = _messageToHashMap(message);
+      if(messageHashMap["type"] == "MESSAGE"){
+        _streams[messageHashMap["destination"]].add(messageHashMap);
+      }// TODO: Handle other types
+    }
+  }
+
+  HashMap _messageToHashMap(String message){
+    HashMap<String,String> data = HashMap();
+    var dataSplitted = message.split("\n");
+    data["type"] = dataSplitted[0];
+    dataSplitted.removeAt(0);
+    while(dataSplitted[0] != ""){
+      var lineSplitted = dataSplitted[0].split(":");
+      data[lineSplitted[0]] = lineSplitted[1];
+      dataSplitted.removeAt(0);
+    }
+    dataSplitted.removeAt(0);
+    data["content"] = "";
+    while(dataSplitted[0] != ""){
+      data["content"] += dataSplitted[0] + "\n";
+      dataSplitted.removeAt(0);
     }
   }
 }
