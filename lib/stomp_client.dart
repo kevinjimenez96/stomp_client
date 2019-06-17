@@ -123,5 +123,6 @@ class StompClient {
       data["content"] += dataSplitted[0] + "\n";
       dataSplitted.removeAt(0);
     }
+    return data;
   }
 }
