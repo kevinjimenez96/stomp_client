@@ -11,7 +11,6 @@ class StompClient {
   IOWebSocketChannel channel;
   Stream<dynamic> stream;
   HashMap<String, int> _topics;
-  HashMap<String, Function> _callBacks;
   HashMap<String, StreamController<HashMap>> _streams;
   bool connected;
   int _topicsCount;
@@ -47,11 +46,9 @@ class StompClient {
     channel.sink.close();
   }
 
-  StreamController<HashMap> subscribe(
-      {@required String topic, @required Function callback}) {
+  StreamController<HashMap> subscribe( {@required String topic}) {
     if (!_topics.containsKey(topic)) {
       _topics[topic] = _topicsCount;
-      _callBacks[topic] = callback;
       _streams[topic] = new StreamController<HashMap>();
       channel.sink.add("SUBSCRIBE\n" +
           "id:" +
@@ -78,7 +75,6 @@ class StompClient {
           "\n" +
           "\x00");
       _topics.remove(topic);
-      _callBacks.remove(topic);
       _streams.remove(topic);
     }
   }
