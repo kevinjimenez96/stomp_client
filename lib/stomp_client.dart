@@ -20,13 +20,16 @@ class StompClient {
     stream = channel.stream;
     channel.stream.listen((message) {
       // handling of the incoming messages
+      //print(message);
       messageReceieved(message);
     }, onError: (error, StackTrace stackTrace) {
       // error handling
     }, onDone: () {
       // communication has been closed
     });
+    
     _topics = HashMap();
+    _streams = HashMap();
     _topicsCount = 0;
   }
 
