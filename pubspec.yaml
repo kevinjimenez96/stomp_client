@@ -1,7 +1,7 @@
 name: stomp_client
 description: A new Flutter package project.
 version: 0.0.1
-author: kevinja9608@gmail.com
+author: Kevin Jimenez <kevinja9608@gmail.com>
 homepage: https://github.com/kevinjimenez96/stomp_client
 
 environment:

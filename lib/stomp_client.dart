@@ -99,13 +99,14 @@ class StompClient {
   }
 
   void messageReceieved(String message) {
-    if(message.split("\n")[0] == "MESSAGE"){
+    general.add(message);
+    /*if(message.split("\n")[0] == "MESSAGE"){
       HashMap messageHashMap = _messageToHashMap(message);
       _streams[messageHashMap["destination"]].add(messageHashMap);
       
     }else{
         general.add(message);
-    }
+    }*/
   }
 
   HashMap _messageToHashMap(String message){
