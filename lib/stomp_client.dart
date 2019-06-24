@@ -28,7 +28,7 @@ class StompClient {
     }, onDone: () {
       // communication has been closed
     });
-    
+    general = StreamController();
     _topics = HashMap();
     _streams = HashMap();
     _topicsCount = 0;
