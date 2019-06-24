@@ -14,6 +14,7 @@ class StompClient {
   HashMap<String, StreamController<HashMap>> _streams;
   bool connected;
   int _topicsCount;
+  StreamController<String> general;
 
   StompClient({@required urlBackend}) {
     channel = IOWebSocketChannel.connect(urlBackend);
@@ -42,7 +43,6 @@ class StompClient {
         "heart-beat:60000,0\n" +
         "\n" +
         "\x00");
-        _streams["general"] = new StreamController<HashMap>();
   }
 
   void disconnect() {
@@ -104,7 +104,7 @@ class StompClient {
       if(messageHashMap["type"] == "MESSAGE"){
         _streams[messageHashMap["destination"]].add(messageHashMap);
       }else{
-        _streams["general"].add(messageHashMap);
+        general.add(message);
       }
     }
   }
