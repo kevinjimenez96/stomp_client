@@ -103,9 +103,9 @@ class StompClient {
       HashMap messageHashMap = _messageToHashMap(message);
       if(messageHashMap["type"] == "MESSAGE"){
         _streams[messageHashMap["destination"]].add(messageHashMap);
-      }else{
-        general.add(message);
       }
+    }else{
+        general.add(message);
     }
   }
 
