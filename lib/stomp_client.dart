@@ -42,6 +42,7 @@ class StompClient {
         "heart-beat:60000,0\n" +
         "\n" +
         "\x00");
+        _streams["general"] = new StreamController<HashMap>();
   }
 
   void disconnect() {
@@ -102,7 +103,9 @@ class StompClient {
       HashMap messageHashMap = _messageToHashMap(message);
       if(messageHashMap["type"] == "MESSAGE"){
         _streams[messageHashMap["destination"]].add(messageHashMap);
-      }// TODO: Handle other types
+      }else{
+        _streams["general"].add(messageHashMap);
+      }
     }
   }
 
