@@ -60,7 +60,8 @@ class StompClient {
           "\n" +
           "destination:" +
           topic +
-          "\n" 
+          "\n" +
+          "ack:auto\n"
           "\n" +
           "\x00");
       _topicsCount++;
@@ -98,14 +99,14 @@ class StompClient {
   }
 
   void messageReceieved(String message) {
-    general.add(message);
-    /*if(message.split("\n")[0] == "MESSAGE"){
+    //general.add(message);
+    if(message.split("\n")[0] == "MESSAGE"){
       HashMap messageHashMap = _messageToHashMap(message);
       _streams[messageHashMap["destination"]].add(messageHashMap);
       
     }else{
         general.add(message);
-    }*/
+    }
   }
 
   HashMap _messageToHashMap(String message){
