@@ -112,7 +112,6 @@ class StompClient {
   HashMap _messageToHashMap(String message){
     HashMap<String,String> data = HashMap();
     var dataSplitted = message.split("\n");
-    print(dataSplitted);
     data["type"] = dataSplitted[0];
     dataSplitted.removeAt(0);
     while(dataSplitted[0] != ""){
@@ -122,7 +121,7 @@ class StompClient {
     }
     dataSplitted.removeAt(0);
     data["content"] = "";
-    while(dataSplitted[0] != ""){
+    while(dataSplitted.length > 0 && dataSplitted[0] != ""){
       data["content"] += dataSplitted[0] + "\n";
       dataSplitted.removeAt(0);
     }
