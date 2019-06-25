@@ -112,6 +112,7 @@ class StompClient {
   HashMap _messageToHashMap(String message){
     HashMap<String,String> data = HashMap();
     var dataSplitted = message.split("\n");
+    print(dataSplitted);
     data["type"] = dataSplitted[0];
     dataSplitted.removeAt(0);
     while(dataSplitted[0] != ""){
