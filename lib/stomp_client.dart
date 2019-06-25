@@ -61,7 +61,7 @@ class StompClient {
           "destination:" +
           topic +
           "\n" +
-          "ack:auto\n"
+          "ack:auto\n" +
           "\n" +
           "\x00");
       _topicsCount++;
