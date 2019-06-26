@@ -50,7 +50,7 @@ class StompClient {
     channel.sink.close();
   }
 
-  StreamController<HashMap> subscribe( {@required String topic}) {
+  StreamController<HashMap> subscribe({@required String topic}) {
     if (!_topics.containsKey(topic)) {
       _topics[topic] = _topicsCount;
       _streams[topic] = new StreamController<HashMap>();
@@ -100,31 +100,31 @@ class StompClient {
 
   void messageReceieved(String message) {
     //general.add(message);
-    if(message.split("\n")[0] == "MESSAGE"){
+    if (message.split("\n")[0] == "MESSAGE") {
       HashMap messageHashMap = _messageToHashMap(message);
       _streams[messageHashMap["destination"]].add(messageHashMap);
-      
-    }else{
-        general.add(message);
+    } else {
+      general.add(message);
     }
   }
 
-  HashMap _messageToHashMap(String message){
-    HashMap<String,String> data = HashMap();
-    var dataSplitted = message.split("\n");
+  HashMap _messageToHashMap(String message) {
+    HashMap<String, String> data = HashMap();
+    var dataSplitted = message.replaceAll(new RegExp(r'\x00'), "").split("\n");
     data["type"] = dataSplitted[0];
     dataSplitted.removeAt(0);
-    while(dataSplitted[0] != ""){
+    while (dataSplitted[0] != "") {
       var lineSplitted = dataSplitted[0].split(":");
       data[lineSplitted[0]] = lineSplitted[1];
       dataSplitted.removeAt(0);
     }
     dataSplitted.removeAt(0);
     data["content"] = "";
-    while(dataSplitted.length > 0 && dataSplitted[0] != ""){
+    while (dataSplitted.length > 0 && dataSplitted[0] != "") {
       data["content"] += dataSplitted[0] + "\n";
       dataSplitted.removeAt(0);
     }
     return data;
   }
 }
+
